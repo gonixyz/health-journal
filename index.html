@@ -20,7 +20,7 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-s
 #app{max-width:640px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) 110px calc(12px + env(safe-area-inset-left))}
 h1{font-size:22px;margin:6px 4px 2px;letter-spacing:-.01em}
 .sub{color:var(--mute);font-size:13px;margin:0 4px 12px}
-.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;position:sticky;top:6px;z-index:5;margin-bottom:12px}
+.tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;position:sticky;top:60px;z-index:5;margin-bottom:12px}
 .tabs button{flex:1;border:0;background:none;padding:9px 4px;border-radius:9px;font:600 14px inherit;font-family:inherit;color:var(--mute)}
 .tabs button.on{background:var(--acc);color:var(--card)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
@@ -76,7 +76,7 @@ table.hist td{padding:6px 4px;border-top:1px solid var(--line)}
 .toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:9;max-width:90%;text-align:center}
 .empty{color:var(--mute);text-align:center;padding:28px 10px}
 .confirm{background:var(--warnbg);border-radius:10px;padding:10px;margin-top:8px;font-size:14px}
-.areas{display:flex;gap:6px;margin:6px 0 12px}
+.areas{display:flex;gap:6px;margin:0 -12px 12px;padding:8px 12px;position:sticky;top:0;z-index:8;background:var(--bg);box-shadow:0 1px 0 var(--line)}
 .areas button{flex:1;padding:12px 8px;border-radius:12px;border:1px solid var(--line);background:var(--card);font:600 16px inherit;font-family:inherit;color:var(--mute)}
 .areas button.on{background:var(--acc);border-color:var(--acc);color:var(--card)}
 .daynav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
@@ -136,6 +136,11 @@ details.card summary{cursor:pointer;list-style:none;padding:2px 0}details.card s
 .cl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ctrack{height:10px;background:var(--acc2);border-radius:99px;overflow:hidden}
 .ctrack i{display:block;height:100%;background:var(--acc);border-radius:99px}.ctrack i.neg{background:var(--down)}
 .cv{font-weight:700;font-variant-numeric:tabular-nums;min-width:56px;text-align:right}
+.lnote{font-size:13px;color:var(--mute);background:var(--bg);border-radius:8px;padding:6px 9px;margin:-2px 0 6px}
+.hint.lastnote{margin:0 0 12px}
+.btn.sm{padding:5px 10px;font-size:14px;min-width:36px}.btn[disabled]{opacity:.35}
+.card.pe{padding-bottom:8px}
+.row.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.row.three>label{min-width:0}
 </style>
 </head>
 <body>
@@ -186,7 +191,7 @@ function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)
 function nowT(){var d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())}
 function dDE(s){if(!s)return '';var p=s.split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'2-digit'})}
 function exDef(k){for(var i=0;i<DAYS.length;i++){var l=PLAN[DAYS[i]].ex;for(var j=0;j<l.length;j++)if(l[j].k===k)return l[j]}return null}
-function exName(k,sess){if(sess&&sess.ex&&sess.ex[k]&&sess.ex[k].name)return sess.ex[k].name;if(k==='bizeps_fav'&&S.bizeps)return S.bizeps;var d=exDef(k);return d?d.n:({bank_multi30:'Bankdrücken Multipresse 30°'}[k]||k)}
+function exName(k,sess){if(sess&&sess.ex&&sess.ex[k]&&sess.ex[k].name)return sess.ex[k].name;if(k==='bizeps_fav'&&S.bizeps)return S.bizeps;var d=exDef(k);return d?d.n:((S.exnames&&S.exnames[k])||{bank_multi30:'Bankdrücken Multipresse 30°'}[k]||k)}
 function range(d){return d.lo===d.hi?String(d.hi):d.lo+'–'+d.hi}
 function sorted(){return S.sessions.slice().sort(function(a,b){var x=(b.date||'')+(b.time||''),y=(a.date||'')+(a.time||'');return x<y?-1:x>y?1:0})}
 function validSets(sets){return (sets||[]).filter(function(s){return num(s.reps)>0})}
@@ -232,6 +237,7 @@ function render(){
 }
 
 function viewNew(){
+ if(PED)return viewPlanEditor();
  var d=draft,sg=suggestDay();
  var h='';
  if(d.id)h+='<div class="suggest">✏️ Du bearbeitest das Training vom '+esc(dDE(d.date))+'. <button class="btn" data-a="cancelEdit" style="margin-left:6px">Abbrechen</button></div>';
@@ -243,6 +249,8 @@ function viewNew(){
  h+='<div class="row"><label>Schlaf letzte Nacht (Std.)<input inputmode="decimal" data-f="sleep" value="'+esc(d.sleep)+'" placeholder="z. B. 7,5"></label></div>';
  h+='<label>Notiz zur Tagesform<textarea data-f="note" placeholder="Stress, Ernährung, Schmerzen, Besonderheiten …">'+esc(d.note)+'</textarea></label>';
  h+='<label class="chk"><input type="checkbox" data-f="warmup"'+(d.warmup?' checked':'')+'> Aufwärmung erledigt (Seilspringen, Mobilität, Bauch)</label></div>';
+ var ls0=lastSessOf(d.day,d.id);if(ls0&&ls0.note)h+='<div class="hint lastnote">📝 <b>Notiz vom letzten '+esc(PLAN[d.day].short)+'</b> ('+esc(dDE(ls0.date))+'): '+esc(ls0.note)+'</div>';
+ h+='<div class="btns" style="margin:-4px 0 12px"><button class="lnk" data-a="ped-open">✎ Übungen von '+esc(PLAN[d.day].short)+' bearbeiten / hinzufügen</button></div>';
  PLAN[d.day].ex.forEach(function(e){h+=exCard(e)});
  h+='<div class="save"><button class="btn pri" data-a="save">'+(d.id?'Änderungen speichern':'Training speichern')+'</button></div>';
  return h;
@@ -254,6 +262,7 @@ function exCard(e){
  if(e.tip)h+='<div class="tip">'+esc(e.tip)+'</div>';
  if(e.custom)h+='<label style="margin-top:8px">Welche Übung?<input data-exname="'+e.k+'" value="'+esc(cur.name||'')+'" placeholder="z. B. Kurzhantel-Curls schräg"></label>';
  h+='<div class="last">'+(last?'Letztes Mal ('+esc(dDE(last.date))+'): <b>'+setStr(ls)+'</b>':'Noch kein Eintrag')+'</div>';
+ if(last&&last.ex[e.k].note)h+='<div class="lnote">📝 Notiz vom letzten Mal: '+esc(last.ex[e.k].note)+'</div>';
  var hi=hint(e,last);h+='<div class="hint '+hi.c+'">'+esc(hi.t)+'</div>';
  h+='<table class="sets"><tr><th>Satz</th><th>kg</th><th>Wdh.</th><th></th></tr>';
  cur.sets.forEach(function(s,i){var p=lv[i];var c=p?cmp(s,p):'';h+='<tr><td>'+(i+1)+'</td><td><input inputmode="decimal" data-set="'+e.k+'|'+i+'|kg" value="'+esc(s.kg)+'" placeholder="'+(p?fmt(num(p.kg)||0):'kg')+'"></td><td><input inputmode="numeric" data-set="'+e.k+'|'+i+'|reps" value="'+esc(s.reps)+'" placeholder="'+(p?p.reps:range(e))+'"></td><td class="ind '+c+'" id="ind-'+e.k+'-'+i+'">'+(IND[c]||'')+'</td></tr>'});
@@ -291,7 +300,7 @@ function importText(txt){
  var o;try{o=JSON.parse(txt)}catch(e){toast('Das sieht nicht nach einer gültigen Sicherung aus');return}
  var tr=o.train||(o.sessions?o:null),nu=o.nut||null;if(!tr&&!nu){toast('Das sieht nicht nach einer gültigen Sicherung aus');return}
  var nt=0,nd=0,nw=0;
- if(tr&&tr.sessions){var ids={};S.sessions.forEach(function(x){ids[x.id]=1});tr.sessions.forEach(function(x){if(x&&x.id&&!ids[x.id]){S.sessions.push(x);nt++}});if(tr.bizeps&&!S.bizeps)S.bizeps=tr.bizeps}
+ if(tr&&tr.sessions){var ids={};S.sessions.forEach(function(x){ids[x.id]=1});tr.sessions.forEach(function(x){if(x&&x.id&&!ids[x.id]){S.sessions.push(x);nt++}});if(tr.bizeps&&!S.bizeps)S.bizeps=tr.bizeps;if(tr.plan&&!S.plan){S.plan=tr.plan;S.exnames=Object.assign({},tr.exnames||{},S.exnames||{});applyPlan();nt=nt||1}}
  if(nu){
   if(nu.config&&!NUT.config){NUT.config=normalizeCfg(clone(nu.config));saveCfg()}
   Object.keys(nu.days||{}).forEach(function(k){var a=nu.days[k],b=NUT.days[k];if(!b||(a.updated||0)>(b.updated||0)){NUT.days[k]=clone(a);persistPath('days/'+k,NUT.days[k]);nd++}});
@@ -339,6 +348,7 @@ app.addEventListener('click',function(ev){
  if(a==='area'){area=v;LS.set('tj_area',v);try{history.replaceState(null,'',v==='food'?'#ernaehrung':location.pathname+location.search)}catch(e){}render();window.scrollTo(0,0);return}
  if(a.indexOf('n-')===0){nAction(a,v,b);return}
  if(a==='h-week'){HW=Math.min(0,HW+(+v));render();return}
+ if(a.indexOf('ped-')===0){pedAction(a,b);return}
  if(a==='tab'){tab=v;pendingDel=null;render();window.scrollTo(0,0)}
  else if(a==='day'){draft.day=v;ensureEx(draft);saveDraft();render()}
  else if(a==='mood'){draft.mood=+v;saveDraft();render()}
@@ -357,9 +367,9 @@ app.addEventListener('click',function(ev){
  else if(a==='toggleImport'){showImport=!showImport;render()}
  else if(a==='import'){var el=document.getElementById('imp');importText(el?el.value:'')}
 });
-app.addEventListener('change',function(ev){var t=ev.target;if(nChange(t))return;if(t.id==='impf'&&t.files&&t.files[0]){var fr=new FileReader();fr.onload=function(){importText(String(fr.result))};fr.readAsText(t.files[0]);return}if(t.getAttribute('data-a')==='prog'){progKey=t.value;render()}else if(t.getAttribute('data-f')==='warmup'){draft.warmup=t.checked;saveDraft()}});
+app.addEventListener('change',function(ev){var t=ev.target;if(t.hasAttribute('data-pe')&&t.type==='checkbox'){pedInput(t);return}if(nChange(t))return;if(t.id==='impf'&&t.files&&t.files[0]){var fr=new FileReader();fr.onload=function(){importText(String(fr.result))};fr.readAsText(t.files[0]);return}if(t.getAttribute('data-a')==='prog'){progKey=t.value;render()}else if(t.getAttribute('data-f')==='warmup'){draft.warmup=t.checked;saveDraft()}});
 app.addEventListener('input',function(ev){
- var t=ev.target;if(t.hasAttribute('data-n')){nInput(t);return}var f=t.getAttribute('data-f');
+ var t=ev.target;if(t.hasAttribute('data-pe')&&t.type!=='checkbox'){pedInput(t);return}if(t.hasAttribute('data-n')){nInput(t);return}var f=t.getAttribute('data-f');
  if(f&&f!=='warmup'){draft[f]=t.value;saveDraft();return}
  var se=t.getAttribute('data-set');
  if(se){var p=se.split('|');var cur=draft.ex[p[0]].sets[+p[1]];cur[p[2]]=t.value;saveDraft();
@@ -837,6 +847,52 @@ function corrCard(){
  return h+'</div>';
 }
 
+/* ================= PLAN-EDITOR ================= */
+var PLAN0=clone(PLAN),PED=null;
+function applyPlan(){if(S.plan&&S.plan.ok1&&S.plan.beine&&S.plan.ok2)PLAN=S.plan;else PLAN=clone(PLAN0);ensureEx(draft)}
+function lastSessOf(day,excl){var l=sorted();for(var i=0;i<l.length;i++)if(l[i].day===day&&l[i].id!==excl)return l[i];return null}
+function viewPlanEditor(){
+ var d=PED,h='<div class="card"><div class="mhead"><h3>Übungen: '+esc(PLAN[d.day].name)+'</h3><button class="xbtn" data-a="ped-cancel" aria-label="Schließen">✕</button></div><div class="meta">Name, Sätze und Wiederholungsbereich anpassen, Reihenfolge mit ↑↓ ändern. Umbenennen behält den bisherigen Verlauf der Übung.</div></div>';
+ d.ex.forEach(function(e,i){
+  h+='<div class="card pe"><div class="mhead"><b>'+(i+1)+'. '+esc(e.n||'Neue Übung')+'</b><span class="btns" style="margin:0"><button class="btn sm" data-a="ped-up" data-i="'+i+'"'+(i===0?' disabled':'')+' aria-label="Nach oben">↑</button><button class="btn sm" data-a="ped-down" data-i="'+i+'"'+(i===d.ex.length-1?' disabled':'')+' aria-label="Nach unten">↓</button><button class="btn sm danger" data-a="ped-del" data-i="'+i+'" aria-label="Entfernen">✕</button></span></div>';
+  if(d.del===i)h+='<div class="confirm">„'+esc(e.n||'Neue Übung')+'“ aus dem Plan entfernen? Bisherige Einträge bleiben im Verlauf.<div class="btns"><button class="btn danger" data-a="ped-delyes" data-i="'+i+'">Ja, entfernen</button><button class="btn" data-a="ped-delno">Nein</button></div></div>';
+  h+='<label>Übung<input data-pe="n" data-i="'+i+'" value="'+esc(e.n)+'" placeholder="z. B. Kabelrudern eng"></label>';
+  h+='<div class="row three"><label>Sätze<input inputmode="numeric" data-pe="s" data-i="'+i+'" value="'+esc(e.s)+'"></label><label>Wdh. von<input inputmode="numeric" data-pe="lo" data-i="'+i+'" value="'+esc(e.lo)+'"></label><label>bis<input inputmode="numeric" data-pe="hi" data-i="'+i+'" value="'+esc(e.hi)+'"></label></div>';
+  h+='<label>Hinweis (optional)<input data-pe="tip" data-i="'+i+'" value="'+esc(e.tip||'')+'" placeholder="z. B. kg pro Seite"></label>';
+  h+='<label class="chk"><input type="checkbox" data-pe="bw" data-i="'+i+'"'+(e.bw?' checked':'')+'> Körpergewichtsübung (kg = Zusatzgewicht)</label></div>';
+ });
+ h+='<div class="btns"><button class="btn" data-a="ped-add">+ Übung hinzufügen</button>'+(d.reset?'':'<button class="btn" data-a="ped-reset">Standard wiederherstellen</button>')+'</div>';
+ if(d.reset)h+='<div class="confirm">Ursprüngliche Übungen dieses Tages wiederherstellen? Deine Änderungen an diesem Tag gehen verloren (Verlauf bleibt).<div class="btns"><button class="btn danger" data-a="ped-resetyes">Wiederherstellen</button><button class="btn" data-a="ped-resetno">Abbrechen</button></div></div>';
+ h+='<div class="save"><button class="btn pri" data-a="ped-save">Übungen speichern</button></div>';
+ return h;
+}
+function pedAction(a,b){
+ var i=+b.getAttribute('data-i'),ex=PED&&PED.ex;
+ if(a==='ped-open'){PED={day:draft.day,ex:clone(PLAN[draft.day].ex),del:null,reset:false};render();window.scrollTo(0,0)}
+ else if(a==='ped-cancel'){PED=null;render()}
+ else if(a==='ped-up'&&i>0){var t=ex[i];ex[i]=ex[i-1];ex[i-1]=t;render()}
+ else if(a==='ped-down'&&i<ex.length-1){var t2=ex[i];ex[i]=ex[i+1];ex[i+1]=t2;render()}
+ else if(a==='ped-del'){PED.del=i;render()}
+ else if(a==='ped-delno'){PED.del=null;render()}
+ else if(a==='ped-delyes'){ex.splice(i,1);PED.del=null;render()}
+ else if(a==='ped-add'){ex.push({k:'c'+Date.now().toString(36),n:'',s:2,lo:8,hi:12});render();setTimeout(function(){var el=app.querySelector('[data-pe="n"][data-i="'+(ex.length-1)+'"]');if(el){el.scrollIntoView({block:'center'});el.focus()}},50)}
+ else if(a==='ped-reset'){PED.reset=true;render()}
+ else if(a==='ped-resetno'){PED.reset=false;render()}
+ else if(a==='ped-resetyes'){PED.ex=clone(PLAN0[PED.day].ex);PED.reset=false;render()}
+ else if(a==='ped-save'){
+  if(!ex.length){toast('Mindestens eine Übung behalten');return}
+  for(var j=0;j<ex.length;j++){var e=ex[j];e.n=String(e.n||'').trim();e.s=Math.round(num(e.s));e.lo=Math.round(num(e.lo));e.hi=Math.round(num(e.hi));
+   if(!e.n){toast('Bitte allen Übungen einen Namen geben');return}
+   if(!(e.s>=1&&e.s<=10)){toast('„'+e.n+'“: Sätze bitte zwischen 1 und 10');return}
+   if(!(e.lo>=1&&e.hi>=e.lo&&e.hi<=100)){toast('„'+e.n+'“: Wiederholungsbereich prüfen');return}
+   if(!e.tip)delete e.tip;if(!e.bw)delete e.bw}
+  var np=clone(PLAN);np[PED.day].ex=clone(ex);S.plan=np;S.exnames=S.exnames||{};
+  DAYS.forEach(function(dk){np[dk].ex.forEach(function(e){S.exnames[e.k]=e.n})});
+  PLAN=S.plan;PED=null;ensureEx(draft);persist('Übungen gespeichert ✓');render();window.scrollTo(0,0)}
+}
+function pedInput(t){var k=t.getAttribute('data-pe'),i=+t.getAttribute('data-i');if(!PED||!PED.ex[i])return;if(k==='bw')PED.ex[i].bw=t.checked;else PED.ex[i][k]=t.value}
+
+applyPlan();
 render();connect();
 })();
 </script>
