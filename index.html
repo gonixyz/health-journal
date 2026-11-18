@@ -188,7 +188,7 @@ details.cimore{margin-top:6px}details.cimore summary{cursor:pointer;font-size:13
 #pl-sub{margin-top:2px}
 #scbar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -6px 18px rgba(0,0,0,.08)}
 #scbar .scb{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mute);margin-bottom:4px}#scbar .scb button{border:0;background:none;font-size:16px;color:var(--mute);padding:4px 8px}
-#scbar iframe{display:block;width:100%;height:120px;border:0;border-radius:8px}
+#scbar iframe{display:block;width:100%;height:120px;border:0;border-radius:8px}#scbar iframe.sp{height:152px;border-radius:12px}#scbar .scb a{color:var(--acc);margin-left:6px}
 body:has(#scbar) #app{padding-bottom:260px}
 .btns.three{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.btns.three .btn{padding:12px 4px}
 </style>
@@ -1147,7 +1147,8 @@ function musicStop(fast){scClose();if(!MUS||!AC)return;var d=MUS;MUS=null;d.aliv
 function musicLevel(x){if(MUS&&AC)try{var k=MUS.k==='hz'?x:0.7+0.3*x;MUS.m.gain.setTargetAtTime(Math.max(0.0001,MUS.base*k),AC.currentTime,0.3)}catch(e){}}
 function musicOn(){return !!MUS||!!document.getElementById('scbar')}
 /* SoundCloud: offizieller Player, bleibt außerhalb der App-Ansicht bestehen */
-function scOpen(it){scClose();if(!it)return;var d=document.createElement('div');d.id='scbar';d.innerHTML='<div class="scb"><span>🎵 '+esc(it.name||'SoundCloud')+'</span><button aria-label="Musik schließen">✕</button></div><iframe title="SoundCloud" allow="autoplay" src="https://w.soundcloud.com/player/?url='+encodeURIComponent(it.url)+'&auto_play=true&visual=false&show_comments=false&hide_related=true&show_user=true&show_reposts=false&show_teaser=false&color=%235b6b45"></iframe>';d.querySelector('button').onclick=scClose;document.body.appendChild(d)}
+function scOpen(it){scClose();if(!it)return;var sp=it.src==='sp',d=document.createElement('div');d.id='scbar';var src=sp?'https://open.spotify.com/embed/'+it.type+'/'+it.id+'?utm_source=generator&theme=0':'https://w.soundcloud.com/player/?url='+encodeURIComponent(it.url)+'&auto_play=true&visual=false&show_comments=false&hide_related=true&show_user=true&show_reposts=false&show_teaser=false&color=%235b6b45';
+ d.innerHTML='<div class="scb"><span>'+(sp?'🎧 ':'🎵 ')+esc(it.name||'Musik')+(sp?' <a href="'+esc(it.url)+'" target="_blank" rel="noopener">in Spotify öffnen</a>':'')+'</span><button aria-label="Musik schließen">✕</button></div><iframe class="'+(sp?'sp':'')+'" title="'+(sp?'Spotify':'SoundCloud')+'" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" src="'+src+'"></iframe>';d.querySelector('button').onclick=scClose;document.body.appendChild(d)}
 function scClose(){var d=document.getElementById('scbar');if(d)d.remove()}
 
 var PREV=null;
@@ -1175,10 +1176,10 @@ function loop(){cancelAnimationFrame(RAF);var P=WUI.player;if(!P||P.ready)return
  RAF=requestAnimationFrame(loop);
 }
 function soundRow(){var k=musicKind(),hz=toneHz(),sc=scList(),ch=function(a,v,l,on){return '<button class="chip'+(on?' on':'')+'" data-a="'+a+'" data-v="'+v+'">'+l+'</button>'};
- var h='<div class="sndrow"><span class="meta">Musik</span><div class="chips">'+MUSIC.map(function(m){return ch('w-mus',m[0],m[1],k===m[0])}).join('')+sc.map(function(x,i){return ch('w-mus','sc:'+i,'🎵 '+esc(x.name),k==='sc:'+i)}).join('')+'</div></div>';
+ var h='<div class="sndrow"><span class="meta">Musik</span><div class="chips">'+MUSIC.map(function(m){return ch('w-mus',m[0],m[1],k===m[0])}).join('')+sc.map(function(x,i){return ch('w-mus','sc:'+i,(x.src==='sp'?'🎧 ':'🎵 ')+esc(x.name),k==='sc:'+i)}).join('')+'</div></div>';
  if(k==='hz')h+='<div class="sndrow"><span class="meta">Frequenz</span><div class="chips">'+TONES.filter(function(x){return x[0]}).map(function(x){return ch('w-tone',x[0],x[1],hz===x[0])}).join('')+'</div></div>';
- if(IS_PWA)h+='<details class="cimore"'+(WUI.scopen?' open':'')+'><summary>Eigene Musik von SoundCloud</summary>'+(sc.length?'<div class="items">'+sc.map(function(x,i){return '<div class="item"><div class="nm"><b>🎵 '+esc(x.name)+'</b><span>'+esc(x.url.replace(/^https?:\/\//,''))+'</span></div><button class="xbtn" data-a="w-scdel" data-i="'+i+'" aria-label="Entfernen">✕</button></div>'}).join('')+'</div>':'')+'<label>Link<input id="scurl" inputmode="url" placeholder="https://soundcloud.com/…"></label><label>Name (optional)<input id="scname" placeholder="z. B. Abendmusik"></label><button class="btn" data-a="w-scadd">Hinzufügen</button><div class="meta" style="margin-top:6px">Spielt über den SoundCloud-Player (Internet nötig). Tippe dort ggf. einmal auf ▶.</div></details>';
- else h+='<div class="meta" style="margin-top:8px">Eigene SoundCloud-Musik gibt es in der Web-App.</div>';
+ if(IS_PWA)h+='<details class="cimore"'+(WUI.scopen?' open':'')+'><summary>Eigene Musik (SoundCloud / Spotify)</summary>'+(sc.length?'<div class="items">'+sc.map(function(x,i){return '<div class="item"><div class="nm"><b>'+(x.src==='sp'?'🎧 ':'🎵 ')+esc(x.name)+'</b><span>'+esc(x.url.replace(/^https?:\/\//,''))+'</span></div><button class="xbtn" data-a="w-scdel" data-i="'+i+'" aria-label="Entfernen">✕</button></div>'}).join('')+'</div>':'')+'<label>Link<input id="scurl" inputmode="url" placeholder="SoundCloud- oder Spotify-Link"></label><label>Name (optional)<input id="scname" placeholder="z. B. Abendmusik"></label><button class="btn" data-a="w-scadd">Hinzufügen</button><div class="meta" style="margin-top:6px">Spielt über den offiziellen Player von SoundCloud bzw. Spotify (Internet nötig). Tippe dort ggf. einmal auf ▶. Spotify spielt ganze Titel nur, wenn du im Browser bei Spotify angemeldet bist – sonst 30-Sek.-Vorschauen.</div></details>';
+ else h+='<div class="meta" style="margin-top:8px">Eigene Musik (SoundCloud/Spotify) gibt es in der Web-App.</div>';
  return h+'<label class="chk" style="margin-top:10px"><input type="checkbox" data-wc="cues"'+(cuesOn()?' checked':'')+'> Signaltöne bei jedem Wechsel</label>'}
 function viewPlayer(){
  var P=WUI.player,o=P.k==='breath'?BREATH[P.id]:MOB[P.id],h='<div class="card player"><div class="mhead"><h3>'+esc(P.n)+'</h3><button class="lnk" data-a="w-stop">'+(P.ready?'Zurück':'Beenden')+'</button></div>';
@@ -1194,7 +1195,7 @@ function viewPlayer(){
  }else{var st=P.steps[P.i],nx=P.steps[P.i+1];
   h+='<div class="meta">'+(P.i+1)+' / '+P.steps.length+'</div><svg class="fig" viewBox="12 4 176 128" aria-hidden="true"><g id="figg">'+(ANIM[st[3]]?figInner(ANIM[st[3]],0):'')+'</g></svg><div class="mstep"><b>'+esc(st[0])+'</b><div class="mcd" id="pl-cd">'+st[1]+'</div><div class="bar"><i id="pl-bar" style="width:0%"></i></div><p>'+esc(st[2])+'</p></div><div class="meta">'+(nx?'Danach: '+esc(nx[0]):'Letzte Übung')+'</div>';
  }
- h+='<div class="btns three"><button class="btn" data-a="w-pause" id="pl-pause">'+(P.pAt?'▶ Weiter':'❚❚ Pause')+'</button><button class="btn" data-a="w-mute" id="pl-mute">'+(musicOn()?'🔊 Musik':'🔇 Musik')+'</button>'+(P.k==='mob'?'<button class="btn" data-a="w-next">Weiter ›</button>':'')+'</div>';
+ h+='<div class="btns '+(P.k==='mob'?'three':'two')+'"><button class="btn" data-a="w-pause" id="pl-pause">'+(P.pAt?'▶ Weiter':'❚❚ Pause')+'</button><button class="btn" data-a="w-mute" id="pl-mute">'+(musicOn()?'🔊 Musik':'🔇 Musik')+'</button>'+(P.k==='mob'?'<button class="btn" data-a="w-next">Weiter ›</button>':'')+'</div>';
  return h+'</div>';
 }
 function finishPlayer(full){var P=WUI.player;if(!P)return;cancelAnimationFrame(RAF);if(P.ready){clearTimeout(PREV);musicStop(true);WUI.player=null;render();return}wakeOff();musicStop(false);var min=Math.round(Math.min(elapsed(P),P.k==='breath'?P.total:1e9)/6)/10;WUI.player=null;
@@ -1215,7 +1216,11 @@ function wAction(a,v,b){
  else if(a==='w-mob')openPlayer('mob',v);
  else if(a==='w-dur'){P.min=+v;render()}
  else if(a==='w-tone'||a==='w-mus'){if(a==='w-tone'){LS.set('tj_tone',+v);LS.set('tj_music','hz')}else LS.set('tj_music',v);var kk=musicKind();ensureAC();clearTimeout(PREV);if(P&&!P.ready)musicStart(kk);else if(kk!=='off'&&kk.indexOf('sc:')!==0){musicStart(kk);PREV=setTimeout(function(){if(!WUI.player||WUI.player.ready)musicStop(false)},4500)}else musicStop(true);render()}
- else if(a==='w-scadd'){var u=(document.getElementById('scurl')||{}).value||'',nm=((document.getElementById('scname')||{}).value||'').trim();u=u.trim();var mm=u.match(/https?:\/\/\S*soundcloud\.com\/\S+/);if(!mm){toast('Bitte einen SoundCloud-Link einfügen');return}var l=scList();l.push({url:mm[0],name:nm||'Mein Track '+(l.length+1)});LS.set('tj_sc',l);LS.set('tj_music','sc:'+(l.length-1));WUI.scopen=true;toast('Musik hinzugefügt ✓');render()}
+ else if(a==='w-scadd'){var u=((document.getElementById('scurl')||{}).value||'').trim(),nm=((document.getElementById('scname')||{}).value||'').trim(),it=null;
+  var ms=u.match(/https?:\/\/\S*soundcloud\.com\/\S+/),mp=u.match(/open\.spotify\.com\/(?:intl-[a-z]{2}(?:-[a-z]+)?\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)/i)||u.match(/spotify:(track|album|playlist|episode|show|artist):([A-Za-z0-9]+)/i);
+  if(ms)it={src:'sc',url:ms[0]};else if(mp)it={src:'sp',type:mp[1].toLowerCase(),id:mp[2],url:'https://open.spotify.com/'+mp[1].toLowerCase()+'/'+mp[2]};
+  else{toast(/spotify\.link/.test(u)?'Bitte den langen Spotify-Link (open.spotify.com/…) verwenden':'Bitte einen SoundCloud- oder Spotify-Link einfügen');return}
+  var l=scList();it.name=nm||(it.src==='sp'?'Spotify '+({track:'Titel',album:'Album',playlist:'Playlist',episode:'Folge',show:'Podcast',artist:'Künstler'}[it.type]||''):'SoundCloud')+' '+(l.length+1);l.push(it);LS.set('tj_sc',l);LS.set('tj_music','sc:'+(l.length-1));WUI.scopen=true;toast('Musik hinzugefügt ✓');render()}
  else if(a==='w-scdel'){var l2=scList(),ix=+b.getAttribute('data-i');l2.splice(ix,1);LS.set('tj_sc',l2);if(String(LS.get('tj_music')).indexOf('sc:')===0)LS.set('tj_music','ambient');WUI.scopen=true;render()}
  else if(a==='w-start')startPlayer();
  else if(a==='w-stop')finishPlayer(false);
