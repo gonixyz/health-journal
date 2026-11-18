@@ -805,6 +805,7 @@ var HW=0; // Wochen-Versatz (0 = diese Woche)
 var DSHORT={ok1:'OK1',beine:'Bein',ok2:'OK2'};
 function bodyW(){var W=wList();return W.length?W[W.length-1].kg:69}
 function e1(s,bw){return((num(s.kg)||0)+(bw||0))*(1+num(s.reps)/30)}
+function bestSet(sets,k){var d=exDef(k),bw=d&&d.bw?bodyW():0,b=null,bv=0;validSets(sets).forEach(function(s){var v=e1(s,bw);if(v>bv){bv=v;b=s}});return b}
 function bestE(sets,k){var d=exDef(k),bw=d&&d.bw?bodyW():0,b=0;validSets(sets).forEach(function(s){var v=e1(s,bw);if(v>b)b=v});return b}
 function sessSorted(){return S.sessions.slice().sort(function(a,b){var x=(a.date||'')+(a.time||''),y=(b.date||'')+(b.time||'');return x<y?-1:x>y?1:0})}
 /* Leistung pro Training: Ø %-Veränderung des besten Satzes ggü. dem letzten Mal derselben Übung */
@@ -887,11 +888,11 @@ function weekCheck(W,P,cur){
 function strengthCard(){
  var hist={};sessSorted().forEach(function(s){Object.keys(s.ex||{}).forEach(function(k){var b=bestE(s.ex[k].sets,k);if(b>0)(hist[k]=hist[k]||[]).push({d:s.date,e:b,s:s})})});
  var from=addDays(today(),-42),rows=[];
- Object.keys(hist).forEach(function(k){var l=hist[k].filter(function(x){return x.d>=from});if(l.length<2)return;var a=l[0],b=l[l.length-1],mx=Math.max.apply(null,l.map(function(x){return x.e}));rows.push({k:k,pct:(b.e/a.e-1)*100,n:l.length,cur:b.e,pr:b.e>=mx-1e-9&&b.e>a.e,s:b.s})});
- var h='<div class="card"><h3>Kraftentwicklung</h3><div class="meta">Geschätztes Maximum (bester Satz), letzte 6 Wochen</div>';
+ Object.keys(hist).forEach(function(k){var l=hist[k].filter(function(x){return x.d>=from});if(l.length<2)return;var a=l[0],b=l[l.length-1],mx=Math.max.apply(null,l.map(function(x){return x.e}));rows.push({k:k,pct:(b.e/a.e-1)*100,n:l.length,cur:b.e,pr:b.e>=mx-1e-9&&b.e>a.e,s:b.s,bs:bestSet(b.s.ex[k].sets,k)})});
+ var h='<div class="card"><h3>Kraftentwicklung</h3><div class="meta">Letzte 6 Wochen. „Geschätztes Max“ = was du für 1 Wiederholung schaffen könntest, berechnet aus deinem besten Satz – so sind Sätze mit unterschiedlich vielen Wiederholungen vergleichbar.</div>';
  if(!rows.length)return h+'<p class="meta" style="margin-top:8px">Sobald du eine Übung zweimal trainiert hast, siehst du hier deinen Fortschritt.</p></div>';
  rows.sort(function(a,b){return b.pct-a.pct});
- h+=rows.slice(0,8).map(function(r){return '<div class="item"><div class="nm"><b>'+esc(exName(r.k,r.s))+'</b><span>'+r.n+'× trainiert · aktuell '+fmt1(r.cur)+' kg'+(exDef(r.k)&&exDef(r.k).bw?' (inkl. Körpergewicht)':'')+(r.pr?' 🏆':'')+'</span></div><span class="ind '+(r.pct>0.5?'up':r.pct<-0.5?'down':'eq')+'" style="font-weight:700">'+(r.pct>=0?'+':'')+fmt1(r.pct)+' %</span></div>'}).join('');
+ h+=rows.slice(0,8).map(function(r){return '<div class="item"><div class="nm"><b>'+esc(exName(r.k,r.s))+'</b><span>'+(r.bs?'bester Satz '+(exDef(r.k)&&exDef(r.k).bw&&!num(r.bs.kg)?'Körpergewicht':fmt1(num(r.bs.kg)||0)+' kg'+(exDef(r.k)&&exDef(r.k).bw?' extra':''))+' × '+fmt1(num(r.bs.reps))+' · ':'')+'geschätztes Max '+Math.round(r.cur)+' kg'+(r.pr?' 🏆':'')+' · '+r.n+'× trainiert</span></div><span class="ind '+(r.pct>0.5?'up':r.pct<-0.5?'down':'eq')+'" style="font-weight:700">'+(r.pct>=0?'+':'')+fmt1(r.pct)+' %</span></div>'}).join('');
  return h+'</div>';
 }
 /* Zusammenhänge: Gruppenvergleiche, nur mit genug Daten */
