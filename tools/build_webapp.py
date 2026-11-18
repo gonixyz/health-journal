@@ -12,7 +12,7 @@ def rep(a, b, count=1, first=False):
     h = h.replace(a, b, 1 if first else -1)
 
 rep('<meta name="viewport" content="width=device-width, initial-scale=1">',
-    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
+    '<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">\n'
     '<meta name="theme-color" content="#5b6b45">\n'
     '<meta name="apple-mobile-web-app-capable" content="yes">\n'
     '<meta name="mobile-web-app-capable" content="yes">\n'
