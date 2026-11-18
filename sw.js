@@ -1,5 +1,5 @@
 /* Trainingsjournal – Offline-Cache */
-var CACHE = 'hj-v11';
+var CACHE = 'hj-v12';
 var ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png', './apple-touch-icon.png', './img/cover.jpg', './img/logo-light.png', './img/logo-dark.png'];
 
 self.addEventListener('install', function (e) {
