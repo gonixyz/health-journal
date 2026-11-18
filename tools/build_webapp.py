@@ -44,7 +44,6 @@ rep("Keine Werte zur Hand? Schreib mir im Chat, was du gegessen hast – ich rec
 assert 'claude.use' not in h.split('function connect')[1].split('function goLocal')[0]
 # App-Name
 rep('<title>Trainingsjournal</title>', '<title>Health Journal</title>', count=2, first=True)
-rep("var h='<h1>Trainingsjournal</h1>", "var h='<h1>Health Journal</h1>")
 rep('<meta name="apple-mobile-web-app-title" content="Journal">', '<meta name="apple-mobile-web-app-title" content="Health Journal">')
 h = h.replace("name='trainingsjournal-'+today()+'.json'", "name='health-journal-'+today()+'.json'")
 open(os.path.join(ROOT, 'index.html'), 'w').write(h)
