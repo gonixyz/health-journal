@@ -163,6 +163,29 @@ details.why summary{cursor:pointer;font-size:13.5px;color:var(--acc);font-weight
 .bin{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink);padding:0 30px}
 .bin b{font-size:17px;background:var(--card);padding:3px 10px;border-radius:99px}.bcd{font-size:30px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
 .mstep{text-align:center;padding:10px 0}.mstep b{font-size:20px;display:block}.mcd{font-size:56px;font-weight:700;margin:6px 0;font-variant-numeric:tabular-nums}.mstep p{font-size:15px;text-align:left}
+.bcirc{transition:none!important;will-change:transform}
+.bring{position:absolute;inset:0;border-radius:50%;border:2px dashed var(--line)}
+.ci .mhead h3{font-size:17px}
+.cir{display:grid;grid-template-columns:96px 1fr;align-items:center;gap:8px;margin:9px 0}
+.cir>span{font-size:14px;color:var(--mute)}.cir .seg button{padding:8px 0;font-size:15px}.cir .seg.emo button{font-size:19px;padding:4px 0}
+.cir .amt input{margin:0}
+details.cimore{margin-top:6px}details.cimore summary{cursor:pointer;font-size:13.5px;color:var(--acc);font-weight:600;padding:6px 0}
+.ampc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:15px inherit;font-family:inherit;color:var(--ink);cursor:pointer}
+.ampc .ampdot{width:52px;height:52px;font-size:19px}.ampx{flex:1;display:flex;flex-direction:column;gap:2px}
+.rec.big{margin-top:8px;padding:14px}.rec.big>span:first-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rec.big>.go{flex:none;display:flex;flex-direction:row}.rec.big b{font-size:16px}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:var(--r);padding:12px;font:15px inherit;font-family:inherit;color:var(--ink);min-height:96px}
+.tile .ti{font-size:22px}.tile .meta{font-size:12px}
+.chip .xs{border:0;background:none;color:inherit;font-size:12px;padding:0 0 0 4px;opacity:.8}
+.sndrow{margin-top:12px}.sndrow .chips{margin-top:4px}
+.mlist{margin:10px 0 0;padding-left:20px;font-size:14.5px;line-height:1.7}
+.fig{display:block;width:100%;max-width:360px;height:auto;margin:6px auto 0;background:var(--bg);border-radius:12px}
+.fig .floor{stroke:var(--line);stroke-width:2}.fig .prop{stroke:var(--mute);stroke-width:3;stroke-dasharray:5 4}
+.fig .trunk{stroke:var(--ink);stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fig .near{stroke:var(--acc);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fig .far{stroke:var(--acc);stroke-width:5;fill:none;opacity:.4;stroke-linecap:round;stroke-linejoin:round}.fig .hd{fill:var(--ink)}
+.mstep{padding:6px 0}.mcd{font-size:44px;margin:2px 0}
+#pl-sub{margin-top:2px}
 </style>
 </head>
 <body>
@@ -252,7 +275,7 @@ function render(){
  var dsb=daysSinceBackup();if(IS_PWA&&hasData()&&(dsb==null||dsb>=7))h+='<div class="hint hold bk">'+(dsb==null?'Noch keine Sicherung deiner Daten.':'Letzte Sicherung vor '+dsb+' Tagen.')+' <button class="lnk" data-a="dl">Jetzt sichern</button></div>';
  if(area==='food'){app.innerHTML=h+viewFood();return}
  if(area==='home'){app.innerHTML=h+viewHome();return}
- if(area==='well'){app.innerHTML=h+viewWell();if(WUI.player){WUI.player.ph=-1;setTimeout(tick,0)}return}
+ if(area==='well'){app.innerHTML=h+viewWell();return}
  h+='<p class="sub">4× pro Woche · Ziel: jedes Mal ein bisschen mehr</p>'+statusLine();
  h+='<div class="tabs">'+[['neu','Training'],['verlauf','Verlauf'],['fort','Fortschritt'],['wissen','Wissen']].map(function(t){return '<button data-a="tab" data-v="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>';
  if(tab==='neu')h+=viewNew();else if(tab==='verlauf')h+=viewHist();else if(tab==='fort')h+=viewProg();else h+=viewKnow();
@@ -393,7 +416,7 @@ app.addEventListener('click',function(ev){
  else if(a==='toggleImport'){showImport=!showImport;render()}
  else if(a==='import'){var el=document.getElementById('imp');importText(el?el.value:'')}
 });
-app.addEventListener('change',function(ev){var t=ev.target;if(t.hasAttribute('data-pe')&&t.type==='checkbox'){pedInput(t);return}if(nChange(t))return;if(t.id==='impf'&&t.files&&t.files[0]){var fr=new FileReader();fr.onload=function(){importText(String(fr.result))};fr.readAsText(t.files[0]);return}if(t.getAttribute('data-a')==='prog'){progKey=t.value;render()}else if(t.getAttribute('data-f')==='warmup'){draft.warmup=t.checked;saveDraft()}});
+app.addEventListener('change',function(ev){var t=ev.target;if(t.hasAttribute('data-wc')){LS.set('tj_cues',t.checked);return}if(t.hasAttribute('data-pe')&&t.type==='checkbox'){pedInput(t);return}if(nChange(t))return;if(t.id==='impf'&&t.files&&t.files[0]){var fr=new FileReader();fr.onload=function(){importText(String(fr.result))};fr.readAsText(t.files[0]);return}if(t.getAttribute('data-a')==='prog'){progKey=t.value;render()}else if(t.getAttribute('data-f')==='warmup'){draft.warmup=t.checked;saveDraft()}});
 app.addEventListener('input',function(ev){
  var t=ev.target;if(t.hasAttribute('data-w')&&WUI.ci){WUI.ci[t.getAttribute('data-w')]=t.value;return}if(t.hasAttribute('data-pe')&&t.type!=='checkbox'){pedInput(t);return}if(t.hasAttribute('data-n')){nInput(t);return}var f=t.getAttribute('data-f');
  if(f&&f!=='warmup'){draft[f]=t.value;saveDraft();return}
@@ -931,43 +954,84 @@ function pedAction(a,b){
 function pedInput(t){var k=t.getAttribute('data-pe'),i=+t.getAttribute('data-i');if(!PED||!PED.ex[i])return;if(k==='bw')PED.ex[i].bw=t.checked;else PED.ex[i][k]=t.value}
 
 applyPlan();
+/* ---------- Animierte Strichfiguren für Mobility ---------- */
+function ext(A,o){var r={};for(var k in A)r[k]=Array.isArray(A[k])?A[k].slice():A[k];for(var k2 in o)r[k2]=o[k2];return r}
+var PZ={};
+PZ.stand={x:100,y:78,t:[-90,-90],n:-90,a1:[90,90],a2:[90,90],l1:[90,90],l2:[90,90]};
+PZ.quad={x:70,y:101,t:[-18,-18],n:-10,a1:[90,90],a2:[90,90],l1:[90,180],l2:[90,180]};
+PZ.sup={x:95,y:118,t:[180,180],n:180,a1:[5,0],a2:[5,0],l1:[0,0],l2:[0,0]};
+PZ.supBent=ext(PZ.sup,{l1:[-45,60],l2:[-45,60]});
+PZ.child={x:70,y:106,t:[10,15],n:20,a1:[10,10],a2:[10,10],l1:[52,180],l2:[52,180]};
+var ANIM={
+ catcow:{f:[ext(PZ.quad,{t:[-40,0],n:60}),ext(PZ.quad,{t:[5,-40],n:-60})],d:[2.5,2.5]},
+ ninety:{f:[{x:90,y:120,t:[-90,-90],n:-90,a1:[80,90],a2:[100,90],l1:[0,175],l2:[175,190]},{x:90,y:120,t:[-55,-45],n:-30,a1:[30,60],a2:[40,70],l1:[0,175],l2:[175,190]}],d:[3,3]},
+ hipflex:{f:[{x:95,y:103,t:[-90,-90],n:-90,a1:[100,70],a2:[80,110],l1:[-2,90],l2:[120,180]},{x:101,y:106,t:[-90,-92],n:-90,a1:[100,70],a2:[80,110],l1:[-8,95],l2:[128,180]}],d:[3,3]},
+ squat:{f:[ext(PZ.stand,{}),{x:86,y:110,t:[-72,-80],n:-80,a1:[20,-40],a2:[20,-40],l1:[-25,105],l2:[-25,105]},{x:86,y:112,t:[-68,-78],n:-78,a1:[20,-40],a2:[20,-40],l1:[-20,103],l2:[-20,103]},{x:86,y:110,t:[-72,-80],n:-80,a1:[20,-40],a2:[20,-40],l1:[-25,105],l2:[-25,105]}],d:[1.5,2.5,2.5,1.5]},
+ hamstring:{f:[ext(PZ.sup,{a1:[-35,-20],l1:[-50,-50]}),ext(PZ.sup,{a1:[-60,-50],l1:[-80,-80]})],d:[2.5,2.5]},
+ fig4:{f:[ext(PZ.sup,{l2:[-45,60],l1:[-60,0]}),ext(PZ.sup,{l2:[-95,-5],l1:[-115,-20],a1:[-25,-10]})],d:[3,3]},
+ child:{f:[PZ.child,ext(PZ.child,{x:69,y:104,t:[8,14],l1:[56,180],l2:[56,180]})],d:[3,3]},
+ latchild:{f:[PZ.child,ext(PZ.child,{x:67,y:105,t:[12,12],n:18,a1:[2,2],a2:[2,2],l1:[54,180],l2:[54,180]})],d:[3,3]},
+ armcircle:{f:[ext(PZ.stand,{a1:[90,90],a2:[90,90]}),ext(PZ.stand,{a1:[-90,-90],a2:[-90,-90]}),ext(PZ.stand,{a1:[-270,-270],a2:[-270,-270]})],d:[2,2,0],lin:true},
+ doorchest:{f:[ext(PZ.stand,{a1:[180,-90]}),ext(PZ.stand,{x:106,t:[-82,-80],n:-80,a1:[172,-95],l1:[97,97],l2:[97,97]})],d:[2.5,2.5],prop:'door'},
+ openbook:{f:[{x:100,y:112,t:[180,180],n:180,a1:[0,0],a2:[15,15],l1:[25,170],l2:[25,170]},{x:100,y:112,t:[180,180],n:-120,a1:[-90,-90],a2:[15,15],l1:[25,170],l2:[25,170]},{x:100,y:112,t:[180,180],n:-170,a1:[-175,-175],a2:[15,15],l1:[25,170],l2:[25,170]},{x:100,y:112,t:[180,180],n:-120,a1:[-90,-90],a2:[15,15],l1:[25,170],l2:[25,170]}],d:[1.5,1.5,1.5,1.5]},
+ thread:{f:[PZ.quad,ext(PZ.quad,{t:[-5,10],n:70,a1:[165,175],a2:[45,140]})],d:[2.5,2.5]},
+ wallangel:{f:[ext(PZ.stand,{a1:[0,-90],a2:[180,-90],l1:[95,90],l2:[85,90]}),ext(PZ.stand,{a1:[-50,-80],a2:[230,-100],l1:[95,90],l2:[85,90]})],d:[2,2],front:true},
+ neck:{f:[ext(PZ.stand,{a1:[80,90],a2:[100,90],l1:[95,90],l2:[85,90]}),ext(PZ.stand,{n:-62,a1:[80,90],a2:[100,90],l1:[95,90],l2:[85,90]}),ext(PZ.stand,{a1:[80,90],a2:[100,90],l1:[95,90],l2:[85,90]}),ext(PZ.stand,{n:-118,a1:[80,90],a2:[100,90],l1:[95,90],l2:[85,90]})],d:[2,2,2,2],front:true},
+ kneechest:{f:[PZ.supBent,ext(PZ.sup,{l1:[-110,0],l2:[-110,0],a1:[-45,-30],a2:[-45,-30]})],d:[2.5,2.5]},
+ twist:{f:[ext(PZ.supBent,{a1:[175,180],a2:[175,180]}),ext(PZ.supBent,{l1:[-12,40],l2:[-8,35],a1:[175,180],a2:[175,180]})],d:[3,3]},
+ legsup:{f:[{x:112,y:118,t:[180,180],n:180,a1:[160,180],a2:[150,180],l1:[-88,-90],l2:[-92,-90]},{x:112,y:118,t:[180,177],n:180,a1:[160,180],a2:[150,180],l1:[-88,-90],l2:[-92,-90]}],d:[3,3],prop:'wall'},
+ breathe:{f:[ext(PZ.sup,{x:105,a1:[10,5],a2:[10,5]}),ext(PZ.sup,{x:105,t:[176,184],a1:[10,5],a2:[10,5]})],d:[4,6]}
+};
+function lerpPose(A,B,q){var o={};for(var k in A){var a=A[k],b=B[k]==null?a:B[k];o[k]=Array.isArray(a)?a.map(function(v,i){return v+(b[i]-v)*q}):(typeof a==='number'?a+(b-a)*q:a)}return o}
+function poseAt(an,sec){var tot=an.d.reduce(function(a,x){return a+x},0),x=sec%tot,i=0;while(i<an.d.length-1&&x>=an.d[i]){x-=an.d[i];i++}var q=an.d[i]?x/an.d[i]:0;if(!an.lin)q=(1-Math.cos(Math.PI*q))/2;return lerpPose(an.f[i],an.f[(i+1)%an.f.length],q)}
+function P2(p,a,l){var r=a*Math.PI/180;return[p[0]+l*Math.cos(r),p[1]+l*Math.sin(r)]}
+function fp(p){return p[0].toFixed(1)+' '+p[1].toFixed(1)}
+function figInner(an,sec){
+ var p=poseAt(an,sec),hip=[p.x,p.y],mid=P2(hip,p.t[0],18),sh=P2(mid,p.t[1],18),hd=P2(sh,p.n==null?p.t[1]:p.n,12);
+ function limb(b,a,l1,l2){var j=P2(b,a[0],l1);return 'M'+fp(b)+'L'+fp(j)+'L'+fp(P2(j,a[1],l2))}
+ var pr='';if(an.prop==='door')pr='<line x1="80" y1="12" x2="80" y2="125" class="prop"/>';if(an.prop==='wall')pr='<line x1="120" y1="20" x2="120" y2="125" class="prop"/>';
+ var far=an.front?'near':'far';
+ return pr+'<line x1="8" y1="126" x2="192" y2="126" class="floor"/><path class="'+far+'" d="'+limb(sh,p.a2,18,17)+' '+limb(hip,p.l2,24,23)+'"/><path class="trunk" d="M'+fp(hip)+'L'+fp(mid)+'L'+fp(sh)+'"/><path class="near" d="'+limb(hip,p.l1,24,23)+' '+limb(sh,p.a1,18,17)+'"/><circle cx="'+hd[0].toFixed(1)+'" cy="'+hd[1].toFixed(1)+'" r="8.5" class="hd"/>';
+}
+
 /* ================= WOHLBEFINDEN & ENTSPANNUNG ================= */
 NUT.well=NUT.well||{};
-var WUI={tab:'heute',edit:false,ci:null,player:null,done:null};
+var WUI={tab:'heute',edit:false,ci:null,player:null,done:null,det:false};
 var REGIONS=[['brust','Brust'],['ruecken','Rücken'],['schultern','Schultern'],['arme','Arme'],['beine','Beine'],['nacken','Nacken']];
 var SORE=['–','leicht','stark'];
 var EXTRA=[['thai','Thaiboxen'],['lauf','Laufen'],['schwimmen','Schwimmen']];
 var BREATH={
- seufzen:{n:'Zyklisches Seufzen',d:'Gegen Stress: durch die Nase tief einatmen, kurz nachschnaufen, dann lange durch den Mund ausatmen.',ph:[['Einatmen (Nase)',2,0.85],['Nachschnaufen',1,1],['Lang ausatmen (Mund)',6,0.5]],min:5},
- ruhig:{n:'Ruhige Atmung 6/min',d:'Zum Runterkommen und Einschlafen: 5 Sekunden ein, 5 Sekunden aus – ruhig und durch die Nase.',ph:[['Einatmen',5,1],['Ausatmen',5,0.5]],min:5},
- box:{n:'Box Breathing',d:'Zum Fokussieren: 4 Sekunden ein, halten, aus, halten.',ph:[['Einatmen',4,1],['Halten',4,1],['Ausatmen',4,0.5],['Halten',4,0.5]],min:4}
+ seufzen:{n:'Zyklisches Seufzen',s:'Seufzen',use:'gegen Stress',d:'Durch die Nase tief einatmen, kurz nachschnaufen, dann lange durch den Mund ausatmen.',ph:[['Einatmen',2,0.82,'Nase'],['Nachschnaufen',1,1,'Nase'],['Ausatmen',6,0.45,'lang, Mund']],min:5},
+ ruhig:{n:'Ruhige Atmung',s:'Ruhig atmen',use:'zum Einschlafen',d:'5 Sekunden ein, 5 Sekunden aus – ruhig durch die Nase.',ph:[['Einatmen',5,1,''],['Ausatmen',5,0.45,'']],min:5},
+ box:{n:'Box Breathing',s:'Box Breathing',use:'zum Fokussieren',d:'4 Sekunden ein, halten, aus, halten.',ph:[['Einatmen',4,1,''],['Halten',4,1,''],['Ausatmen',4,0.45,''],['Halten',4,0.45,'']],min:4}
 };
 var MOB={
- huefte:{n:'Hüfte & Beine',d:'Nach Beintag oder Thaiboxen.',ex:[
-  ['Katze-Kuh',45,0,'Vierfüßlerstand. Mit dem Einatmen ins Hohlkreuz, mit dem Ausatmen den Rücken rund machen. Langsam im Atemrhythmus.'],
-  ['90/90-Hüftrotation',60,1,'Im Sitzen beide Beine im 90°-Winkel ablegen, aufrecht sitzen, Oberkörper leicht über das vordere Bein neigen.'],
-  ['Hüftbeuger-Dehnung',45,1,'Tiefer Ausfallschritt, hinteres Knie am Boden. Becken nach vorn schieben, Po anspannen – Dehnung vorn an der Hüfte.'],
-  ['Tiefe Hocke',45,0,'Füße schulterbreit, so tief wie bequem in die Hocke, Fersen am Boden, Ellbogen drücken die Knie sanft nach außen.'],
-  ['Beinrückseite',45,1,'Rückenlage, ein Bein gestreckt nach oben, mit Händen oder Handtuch sanft heranziehen. Knie fast gestreckt.'],
-  ['Figur-4 in Rückenlage',45,1,'Rückenlage, einen Knöchel aufs andere Knie legen, das untere Bein zur Brust ziehen – Dehnung im Gesäß.'],
-  ['Kindhaltung',60,0,'Auf die Fersen setzen, Oberkörper nach vorn ablegen, Arme lang. Ruhig in den Rücken atmen.']]},
- schulter:{n:'Schultern & Brustwirbelsäule',d:'Nach Oberkörper-Tagen und viel Sitzen.',ex:[
-  ['Armkreisen',60,0,'Arme gestreckt, große langsame Kreise – 30 Sekunden vorwärts, dann rückwärts.'],
-  ['Brustdehnung im Türrahmen',45,1,'Unterarm auf Schulterhöhe an den Türrahmen, Körper sanft nach vorn drehen, bis die Brust dehnt.'],
-  ['Offenes Buch',45,1,'Seitlage, Knie angewinkelt, Arme vorn gestreckt. Oberen Arm im Bogen zur anderen Seite öffnen, Blick folgt der Hand.'],
-  ['Thread the Needle',45,1,'Vierfüßlerstand, einen Arm unter dem Körper hindurchschieben und Schulter ablegen. Sanft in die Drehung atmen.'],
-  ['Wandengel',60,0,'Rücken und Hinterkopf an die Wand, Arme im „U“ an der Wand langsam hoch- und runtergleiten.'],
-  ['Lat-Dehnung',45,1,'Kindhaltung, beide Hände zu einer Seite wandern lassen – Dehnung seitlich am Rücken.'],
-  ['Nacken sanft',30,1,'Aufrecht sitzen, Ohr Richtung Schulter neigen, gegenüberliegende Schulter locker nach unten.']]},
- abend:{n:'Abend-Entspannung',d:'Sanft dehnen und runterfahren – ideal vor dem Schlafen.',ex:[
-  ['Kindhaltung',60,0,'Auf die Fersen setzen, Oberkörper ablegen, Stirn auf den Boden oder ein Kissen. Lang ausatmen.'],
-  ['Knie zur Brust',60,0,'Rückenlage, beide Knie umfassen und sanft zur Brust ziehen, leicht hin- und herwiegen.'],
-  ['Liegende Drehung',45,1,'Rückenlage, Knie angewinkelt zu einer Seite sinken lassen, Blick zur anderen Seite.'],
-  ['Figur-4 in Rückenlage',45,1,'Knöchel aufs andere Knie, unteres Bein sanft heranziehen.'],
-  ['Beine hoch',120,0,'Beine an die Wand oder auf einen Stuhl legen, Arme locker neben dem Körper. Einfach liegen.'],
-  ['Ruhig atmen',180,0,'Liegen bleiben: 4 Sekunden einatmen, 6 Sekunden ausatmen. Gedanken kommen und gehen lassen.']]}
+ huefte:{n:'Hüfte & Beine',s:'Hüfte & Beine',use:'nach Bein/Thaiboxen',ex:[
+  ['Katze-Kuh',45,0,'Vierfüßlerstand. Einatmen: Hohlkreuz. Ausatmen: Rücken rund.','catcow'],
+  ['90/90-Sitz',60,1,'Beide Beine im 90°-Winkel ablegen, aufrecht sitzen und sanft nach vorn lehnen.','ninety'],
+  ['Hüftbeuger-Dehnung',45,1,'Tiefer Ausfallschritt, hinteres Knie am Boden. Becken nach vorn schieben.','hipflex'],
+  ['Tiefe Hocke',45,0,'So tief wie bequem, Fersen am Boden, Ellbogen schieben die Knie nach außen.','squat'],
+  ['Beinrückseite',45,1,'Rückenlage, ein Bein gestreckt sanft heranziehen.','hamstring'],
+  ['Figur 4',45,1,'Rückenlage, Knöchel aufs andere Knie, unteres Bein heranziehen.','fig4'],
+  ['Kindhaltung',60,0,'Auf die Fersen setzen, Oberkörper ablegen, Arme lang. Ruhig atmen.','child']]},
+ schulter:{n:'Schultern & Rücken',s:'Schultern & Rücken',use:'nach Oberkörper',ex:[
+  ['Armkreisen',60,0,'Große, langsame Kreise – erst vorwärts, dann rückwärts.','armcircle'],
+  ['Brust am Türrahmen',45,1,'Unterarm an den Rahmen, Körper sanft nach vorn drehen.','doorchest'],
+  ['Offenes Buch',45,1,'Seitlage, Knie angewinkelt. Oberen Arm im Bogen nach hinten öffnen.','openbook'],
+  ['Thread the Needle',45,1,'Vierfüßlerstand, Arm unter dem Körper durchschieben, Schulter ablegen.','thread'],
+  ['Wandengel',60,0,'Rücken an die Wand, Arme im „U“ langsam hoch und runter.','wallangel'],
+  ['Seitliche Rückendehnung',45,1,'Kindhaltung, Hände zu einer Seite wandern lassen.','latchild'],
+  ['Nacken sanft',30,1,'Ohr Richtung Schulter neigen, andere Schulter locker lassen.','neck']]},
+ abend:{n:'Abend-Entspannung',s:'Abend-Entspannung',use:'vor dem Schlafen',ex:[
+  ['Kindhaltung',60,0,'Oberkörper ablegen, Stirn auf den Boden. Lang ausatmen.','child'],
+  ['Knie zur Brust',60,0,'Rückenlage, Knie umfassen und sanft heranziehen.','kneechest'],
+  ['Liegende Drehung',45,1,'Knie angewinkelt zur Seite sinken lassen.','twist'],
+  ['Figur 4',45,1,'Knöchel aufs andere Knie, unteres Bein heranziehen.','fig4'],
+  ['Beine hoch',120,0,'Beine an die Wand oder auf einen Stuhl. Einfach liegen.','legsup'],
+  ['Ruhig atmen',180,0,'Liegen bleiben: 4 Sekunden ein, 6 Sekunden aus.','breathe']]}
 };
-function mobSteps(r){var st=[];MOB[r].ex.forEach(function(e){if(e[2]){st.push([e[0]+' – links',e[1],e[3]]);st.push([e[0]+' – rechts',e[1],e[3]])}else st.push([e[0],e[1],e[3]])});return st}
+var TONES=[[0,'Aus'],[174,'174 Hz'],[396,'396 Hz'],[528,'528 Hz'],[639,'639 Hz']];
+function mobSteps(r){var st=[];MOB[r].ex.forEach(function(e){if(e[2]){st.push([e[0]+' · links',e[1],e[3],e[4]]);st.push([e[0]+' · rechts',e[1],e[3],e[4]])}else st.push([e[0],e[1],e[3],e[4]])});return st}
 function mobMin(r){return Math.round(mobSteps(r).reduce(function(a,s){return a+s[1]},0)/60)}
 function wDay(d){return NUT.well[d]||null}
 function relaxMin(w){return w&&w.relax?w.relax.reduce(function(a,x){return a+(x.min||0)},0):0}
@@ -986,58 +1050,49 @@ function readiness(date){
  if(ky)add(-5,'Krafttraining gestern');if(ex)add(-8,'Kampfsport/Ausdauer gestern');
  if(ky&&S.sessions.some(function(s){return s.date===addDays(date,-2)}))add(-5,'2 Trainingstage in Folge');
  sc=Math.max(0,Math.min(100,Math.round(sc)));
- var lv=sc>=75?['grün','Voll trainieren','Du bist gut erholt – heute darfst du an die Grenze gehen.','up']:sc>=50?['gelb','Normal trainieren','Trainiere wie geplant, aber lass 1–2 Wiederholungen mehr im Tank.','hold']:['rot','Leichter machen','Heute lieber leichter trainieren oder Mobility statt Training. Abends Atmung oder Abend-Entspannung.','down'];
+ var lv=sc>=75?['grün','Voll trainieren','Gut erholt – heute darfst du an die Grenze.','up']:sc>=50?['gelb','Normal trainieren','Wie geplant, aber 1–2 Wdh. im Tank lassen.','hold']:['rot','Leichter machen','Leichter trainieren oder Mobility statt Training.','down'];
  return{sc:sc,lv:lv,why:why};
 }
 function eveningPick(){
  var t=today(),w=wDay(t),r=readiness(t),ses=S.sessions.filter(function(s){return s.date===t||s.date===addDays(t,-1)}).map(function(s){return s.day});
- if((w&&w.stress>=4)||(r&&r.sc<50))return{k:'breath',id:'seufzen',why:'Stress oder Erschöpfung hoch – zyklisches Seufzen beruhigt am schnellsten.',then:'abend'};
- if(ses.indexOf('beine')>=0||(w&&(w.extra||[]).length))return{k:'mob',id:'huefte',why:'Nach Beintag/Kampfsport tut Hüfte & Beine gut.'};
- if(ses.indexOf('ok1')>=0||ses.indexOf('ok2')>=0)return{k:'mob',id:'schulter',why:'Nach Oberkörper-Training: Schultern & Brustwirbelsäule.'};
- return{k:'mob',id:'abend',why:'Ruhiger Tag – sanft dehnen und runterfahren.'};
+ if((w&&w.stress>=4)||(r&&r.sc<50))return{k:'breath',id:'seufzen',why:'Stress oder Erschöpfung hoch'};
+ if(ses.indexOf('beine')>=0||(w&&(w.extra||[]).length))return{k:'mob',id:'huefte',why:'Nach Beintag/Kampfsport'};
+ if(ses.indexOf('ok1')>=0||ses.indexOf('ok2')>=0)return{k:'mob',id:'schulter',why:'Nach Oberkörper-Training'};
+ return{k:'mob',id:'abend',why:'Zum Runterfahren'};
 }
 function streak(){var n=0,d=today();if(!wDay(d)||wDay(d).sleep==null)d=addDays(d,-1);while(wDay(d)&&wDay(d).sleep!=null){n++;d=addDays(d,-1)}return n}
 
 /* ---------- Ansichten ---------- */
 function viewWell(){
  if(WUI.player)return viewPlayer();
- if(WUI.done)return '<div class="card" style="text-align:center;padding:28px 16px"><div style="font-size:44px">🌙</div><h3 style="margin:8px 0 4px">Gut gemacht</h3><p class="meta">'+esc(WUI.done.n)+' · '+fmt1(WUI.done.min)+' Minuten eingetragen.</p><button class="btn pri" data-a="w-donex">Fertig</button></div>';
+ if(WUI.done)return '<div class="card" style="text-align:center;padding:28px 16px"><div style="font-size:44px">🌙</div><h3 style="margin:8px 0 4px">Gut gemacht</h3><p class="meta">'+esc(WUI.done.n)+' · '+fmt1(WUI.done.min)+' Min. eingetragen</p><button class="btn pri" data-a="w-donex">Fertig</button></div>';
  var h='<div class="tabs">'+[['heute','Heute'],['verlauf','Verlauf']].map(function(t){return '<button data-a="w-tab" data-v="'+t[0]+'" class="'+(WUI.tab===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')+'</div>';
  return h+(WUI.tab==='heute'?wHeute():wVerlauf());
 }
-function seg5(field,val,labels){return '<div class="seg'+(labels?' emo':'')+'" style="margin-top:4px">'+[1,2,3,4,5].map(function(i){return '<button data-a="w-set" data-f="'+field+'" data-v="'+i+'" class="'+(val===i?'on':'')+'">'+(labels?labels[i-1]:i)+'</button>'}).join('')+'</div>'}
+function seg5(field,val,labels){return '<div class="seg'+(labels?' emo':'')+'">'+[1,2,3,4,5].map(function(i){return '<button data-a="w-set" data-f="'+field+'" data-v="'+i+'" class="'+(val===i?'on':'')+'">'+(labels?labels[i-1]:i)+'</button>'}).join('')+'</div>'}
 function ciForm(){
- var c=WUI.ci;
- var h='<div class="card"><div class="mhead"><h3>Morgen-Check-in</h3><span class="meta">'+esc(dDE(today()))+'</span></div>';
- h+='<div class="row" style="margin-top:8px"><label>Schlaf (Stunden)<input inputmode="decimal" data-w="sleep" value="'+esc(c.sleep==null?'':fmtAmt(c.sleep))+'" placeholder="z. B. 7,5"></label></div>';
- h+='<label>Schlafqualität (1 = schlecht, 5 = super)'+seg5('sq',c.sq)+'</label>';
- h+='<label>Stress (1 = entspannt, 5 = sehr gestresst)'+seg5('stress',c.stress)+'</label>';
- h+='<label>Energie (1 = leer, 5 = voll da)'+seg5('energy',c.energy)+'</label>';
- h+='<label>Stimmung'+seg5('mood',c.mood,MOODS)+'</label>';
- h+='<label>Muskelkater <span class="meta">(antippen: – / leicht / stark)</span><div class="sore">'+REGIONS.map(function(r){var v=(c.sore||{})[r[0]]||0;return '<button data-a="w-sore" data-v="'+r[0]+'" class="s'+v+'">'+r[1]+'<small>'+SORE[v]+'</small></button>'}).join('')+'</div></label>';
- h+='<label>Gestern zusätzlich trainiert?<div class="chips" style="margin-top:4px">'+EXTRA.map(function(x){var on=(c.extra||[]).indexOf(x[0])>=0;return '<button class="chip'+(on?' on':'')+'" data-a="w-extra" data-v="'+x[0]+'">'+(on?'✓ ':'')+x[1]+'</button>'}).join('')+'</div></label>';
- return h+'<div class="btns"><button class="btn pri" data-a="w-cisave">Check-in speichern</button>'+(wDay(today())?'<button class="btn" data-a="w-cicancel">Abbrechen</button>':'')+'</div></div>';
+ var c=WUI.ci,h='<div class="card ci"><div class="mhead"><h3>☀️ Morgen-Check-in</h3><span class="meta">1 = niedrig · 5 = hoch</span></div>';
+ h+='<div class="cir"><span>Schlaf</span><div class="amt wide"><input inputmode="decimal" data-w="sleep" value="'+esc(c.sleep==null?'':fmtAmt(c.sleep))+'" placeholder="7,5"><small>Std.</small></div></div>';
+ h+='<div class="cir"><span>Schlafqualität</span>'+seg5('sq',c.sq)+'</div>';
+ h+='<div class="cir"><span>Stress</span>'+seg5('stress',c.stress)+'</div>';
+ h+='<div class="cir"><span>Energie</span>'+seg5('energy',c.energy)+'</div>';
+ h+='<div class="cir"><span>Stimmung</span>'+seg5('mood',c.mood,MOODS)+'</div>';
+ h+='<details class="cimore"'+((c.extra&&c.extra.length)||Object.keys(c.sore||{}).some(function(k){return c.sore[k]})?' open':'')+'><summary>Muskelkater & Training gestern</summary><div class="sore">'+REGIONS.map(function(r){var v=(c.sore||{})[r[0]]||0;return '<button data-a="w-sore" data-v="'+r[0]+'" class="s'+v+'">'+r[1]+'<small>'+SORE[v]+'</small></button>'}).join('')+'</div><div class="chips">'+EXTRA.map(function(x){var on=(c.extra||[]).indexOf(x[0])>=0;return '<button class="chip'+(on?' on':'')+'" data-a="w-extra" data-v="'+x[0]+'">'+(on?'✓ ':'')+x[1]+'</button>'}).join('')+'</div></details>';
+ return h+'<div class="btns"><button class="btn pri" data-a="w-cisave">Speichern</button>'+(wDay(today())?'<button class="btn" data-a="w-cicancel">Abbrechen</button>':'')+'</div></div>';
 }
+function tile(k,id){var o=k==='breath'?BREATH[id]:MOB[id];return '<button class="tile" data-a="'+(k==='breath'?'w-breath':'w-mob')+'" data-v="'+id+'"><span class="ti">'+(k==='breath'?'🌬️':'🧘')+'</span><b>'+esc(o.s)+'</b><span class="meta">'+(k==='breath'?o.min:mobMin(id))+' Min. · '+esc(o.use)+'</span></button>'}
 function wHeute(){
  var t=today(),w=wDay(t),h='',done=w&&w.sleep!=null;
  if(!done||WUI.edit){if(!WUI.ci)WUI.ci=w?clone(w):{date:t,sore:{},extra:[]};h+=ciForm()}
- else{
-  var r=readiness(t);
-  h+='<div class="card"><div class="mhead"><h3>Erholung heute</h3><button class="lnk" data-a="w-ciedit">Check-in bearbeiten</button></div>';
-  h+='<div class="amp"><div class="ampdot '+r.lv[3]+'"><b>'+r.sc+'</b></div><div><b class="ampt">'+r.lv[1]+'</b><div class="meta">'+r.lv[2]+'</div></div></div>';
-  h+='<details class="why"><summary>Wie kommt der Wert zustande?</summary><ul class="chk-l">'+(r.why.length?r.why.map(function(x){return '<li>'+esc(x[0])+' <b class="ind '+(x[1]>0?'up':'down')+'">'+(x[1]>0?'+':'')+x[1]+'</b></li>'}).join(''):'<li>Alles im grünen Bereich.</li>')+'</ul><div class="meta">Start bei 100 Punkten. Faustregel aus deinen Angaben – keine medizinische Messung.</div></details>';
-  h+='<div class="mini" style="margin-top:10px">'+[['Schlaf',fmt1(num(w.sleep))+' h'],['Qualität',(w.sq||'–')+'/5'],['Stress',(w.stress||'–')+'/5'],['Stimmung',w.mood?MOODS[w.mood-1]:'–']].map(function(x){return '<div class="ms"><span class="meta">'+x[0]+'</span><b>'+x[1]+'</b></div>'}).join('')+'</div></div>';
+ else{var r=readiness(t),st=streak();
+  h+='<button class="card ampc" data-a="w-det"><span class="ampdot '+r.lv[3]+'"><b>'+r.sc+'</b></span><span class="ampx"><b class="ampt">'+r.lv[1]+'</b><span class="meta">'+r.lv[2]+'</span></span><span class="meta">'+(st>=2?'🔥'+st:'')+' '+(WUI.det?'▴':'▾')+'</span></button>';
+  if(WUI.det)h+='<div class="card"><ul class="chk-l">'+(r.why.length?r.why.map(function(x){return '<li>'+esc(x[0])+' <b class="ind '+(x[1]>0?'up':'down')+'">'+(x[1]>0?'+':'')+x[1]+'</b></li>'}).join(''):'<li>Alles im grünen Bereich.</li>')+'</ul><div class="meta">Start bei 100 Punkten · Faustregel, keine Messung.</div><div class="btns"><button class="lnk" data-a="w-ciedit">Check-in bearbeiten</button></div></div>';
  }
- var st=streak();if(st>=2)h+='<div class="hint up">🔥 '+st+' Tage Check-in in Folge</div>';
- var ep=eveningPick(),rm=relaxMin(w);
- h+='<div class="card"><div class="mhead"><h3>Abendprogramm</h3><span class="meta">'+(rm?fmt1(rm)+' Min. heute ✓':'10–15 Min.')+'</span></div><div class="meta">'+esc(ep.why)+'</div>';
- var rec=ep.k==='breath'?BREATH[ep.id]:MOB[ep.id];
- h+='<button class="rec" data-a="'+(ep.k==='breath'?'w-breath':'w-mob')+'" data-v="'+ep.id+'"><span class="ri">'+(ep.k==='breath'?'🌬️':'🧘')+'</span><span><b>Empfohlen: '+esc(rec.n)+'</b><span class="meta">'+(ep.k==='breath'?rec.min:mobMin(ep.id))+' Min. · '+esc(rec.d)+'</span></span><span class="go">▶</span></button>';
- if(ep.then)h+='<div class="meta" style="margin-top:6px">Danach passt <b>'+esc(MOB[ep.then].n)+'</b> ('+mobMin(ep.then)+' Min.) – zusammen ~10 Min.</div>';
- h+='</div>';
- h+='<div class="card"><h3>Atmung</h3>'+Object.keys(BREATH).map(function(k){var b=BREATH[k];return '<button class="rec sm" data-a="w-breath" data-v="'+k+'"><span class="ri">🌬️</span><span><b>'+esc(b.n)+'</b><span class="meta">'+esc(b.d)+'</span></span><span class="go">▶</span></button>'}).join('')+'</div>';
- h+='<div class="card"><h3>Mobility</h3>'+Object.keys(MOB).map(function(k){var m=MOB[k];return '<button class="rec sm" data-a="w-mob" data-v="'+k+'"><span class="ri">🧘</span><span><b>'+esc(m.n)+' · '+mobMin(k)+' Min.</b><span class="meta">'+esc(m.d)+'</span></span><span class="go">▶</span></button>'}).join('')+'<div class="meta" style="margin-top:8px">Nur bis zu einem angenehmen Ziehen dehnen – nie in den Schmerz.</div></div>';
- if(w&&w.relax&&w.relax.length)h+='<div class="card"><h3>Heute erledigt</h3>'+w.relax.map(function(x,i){return '<div class="item"><div class="nm"><b>'+esc(x.n)+'</b><span>'+esc(x.at||'')+' · '+fmt1(x.min)+' Min.</span></div><button class="xbtn" data-a="w-rdel" data-i="'+i+'" aria-label="Entfernen">✕</button></div>'}).join('')+'</div>';
+ var ep=eveningPick(),rm=relaxMin(w),rec=ep.k==='breath'?BREATH[ep.id]:MOB[ep.id];
+ h+='<div class="card"><div class="mhead"><h3>🌙 Heute Abend</h3>'+(rm?'<span class="pill up">✓ '+fmt1(rm)+' Min.</span>':'')+'</div>';
+ h+='<button class="rec big" data-a="'+(ep.k==='breath'?'w-breath':'w-mob')+'" data-v="'+ep.id+'"><span><b>'+esc(rec.n)+'</b><span class="meta">'+(ep.k==='breath'?rec.min:mobMin(ep.id))+' Min. · '+esc(ep.why)+'</span></span><span class="go">▶</span></button></div>';
+ h+='<div class="exh" style="margin:4px 4px 6px">Alle Übungen</div><div class="tiles">'+Object.keys(BREATH).map(function(k){return tile('breath',k)}).join('')+Object.keys(MOB).map(function(k){return tile('mob',k)}).join('')+'</div>';
+ if(w&&w.relax&&w.relax.length)h+='<div class="chips" style="margin:12px 2px">'+w.relax.map(function(x,i){return '<span class="chip on">✓ '+esc(x.n)+' '+fmt1(x.min)+'′ <button class="xs" data-a="w-rdel" data-i="'+i+'" aria-label="Entfernen">✕</button></span>'}).join('')+'</div>';
  return h;
 }
 function wVerlauf(){
@@ -1049,59 +1104,83 @@ function wVerlauf(){
  return h;
 }
 
-/* ---------- Player (Atmung & Mobility) ---------- */
-var AC=null;
-function beep(f,d){if(LS.get('tj_sound')===false)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();var o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f||660;o.type='sine';g.gain.setValueAtTime(0.0001,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.12,AC.currentTime+0.02);g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+(d||0.35));o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+(d||0.35)+0.05)}catch(e){}}
+/* ---------- Klang: Solfeggio-Klangteppich + Signaltöne (Web Audio) ---------- */
+var AC=null,DR=null;
+function ensureAC(){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running'&&AC.resume)AC.resume()}catch(e){}return AC}
+function toneHz(){var v=LS.get('tj_tone');return v==null?528:v}
+function cuesOn(){return LS.get('tj_cues')!==false}
+function beep(f,d){if(!cuesOn()||!AC)return;try{var o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime;o.frequency.value=f||660;o.type='sine';g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.1,t+0.03);g.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.5));o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+(d||0.5)+0.05)}catch(e){}}
+function droneStart(f){droneStop(true);if(!f||!AC)return;try{var t=AC.currentTime,m=AC.createGain();m.gain.setValueAtTime(0.0001,t);m.connect(AC.destination);var os=[];
+ [[f,0.55],[f/2,0.35],[f*1.5,0.06],[f*1.005,0.18]].forEach(function(x){var o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=x[0];g.gain.value=x[1];o.connect(g);g.connect(m);o.start(t);os.push(o)});
+ var l=AC.createOscillator(),lg=AC.createGain();l.frequency.value=0.07;lg.gain.value=0.012;l.connect(lg);lg.connect(m.gain);l.start(t);os.push(l);
+ m.gain.exponentialRampToValueAtTime(0.11,t+3);DR={m:m,os:os,base:0.11}}catch(e){}}
+function droneStop(fast){if(!DR||!AC)return;var d=DR;DR=null;try{var t=AC.currentTime,s=fast?0.25:1.8;d.m.gain.cancelScheduledValues(t);d.m.gain.setValueAtTime(Math.max(0.0001,d.m.gain.value),t);d.m.gain.exponentialRampToValueAtTime(0.0001,t+s);d.os.forEach(function(o){o.stop(t+s+0.1)})}catch(e){}}
+function droneLevel(x){if(DR&&AC)try{DR.m.gain.setTargetAtTime(Math.max(0.0001,DR.base*x),AC.currentTime,0.3)}catch(e){}}
+
+/* ---------- Player ---------- */
 var WL=null;function wakeOn(){try{if(navigator.wakeLock)navigator.wakeLock.request('screen').then(function(l){WL=l},function(){})}catch(e){}}function wakeOff(){try{if(WL)WL.release();WL=null}catch(e){}}
-function startBreath(id,min){var b=BREATH[id];WUI.player={k:'breath',id:id,n:b.n,total:min*60,t0:Date.now(),paused:0,pAt:null,ph:-1};try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume()}catch(e){}wakeOn();render();window.scrollTo(0,0);tick()}
-function startMob(id){var st=mobSteps(id);WUI.player={k:'mob',id:id,n:MOB[id].n,steps:st,i:0,stepT0:Date.now(),t0:Date.now(),paused:0,pAt:null};try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume&&AC.resume()}catch(e){}wakeOn();render();window.scrollTo(0,0);beep(660);tick()}
-var TK=null;
+function openPlayer(k,id){var o=k==='breath'?BREATH[id]:MOB[id];WUI.player={k:k,id:id,n:o.n,ready:true,min:k==='breath'?o.min:mobMin(id),steps:k==='mob'?mobSteps(id):null};render();window.scrollTo(0,0)}
+function startPlayer(){var P=WUI.player;ensureAC();P.ready=false;P.t0=Date.now();P.paused=0;P.pAt=null;if(P.k==='breath')P.total=P.min*60;else{P.i=0;P.stepT0=Date.now();P.stepPaused=0}
+ droneStart(toneHz());wakeOn();beep(528,0.6);render();window.scrollTo(0,0);loop()}
 function elapsed(P){return((P.pAt||Date.now())-P.t0-P.paused)/1000}
-function tick(){clearTimeout(TK);var P=WUI.player;if(!P||area!=='well')return;
- if(!P.pAt){
-  if(P.k==='breath'){var b=BREATH[P.id],cyc=b.ph.reduce(function(a,x){return a+x[1]},0),e=elapsed(P);
-   if(e>=P.total){finishPlayer(true);return}
-   var inC=e%cyc,acc=0,pi=0;for(;pi<b.ph.length;pi++){if(inC<acc+b.ph[pi][1])break;acc+=b.ph[pi][1]}
-   var key=Math.floor(e/cyc)+'-'+pi;if(key!==P.ph){P.ph=key;var c=document.getElementById('bc');if(c){c.style.transitionDuration=b.ph[pi][1]+'s';c.style.transform='scale('+b.ph[pi][2]+')'}var lb=document.getElementById('pl-ph');if(lb)lb.textContent=b.ph[pi][0];if(pi===0)beep(520,0.25)}
-   var cd=document.getElementById('pl-cd');if(cd)cd.textContent=Math.ceil(acc+b.ph[pi][1]-inC);
-   var rm=document.getElementById('pl-rm');if(rm){var s=Math.ceil(P.total-e);rm.textContent=Math.floor(s/60)+':'+pad(s%60)+' übrig'}
-  }else{var st=P.steps[P.i],se=((P.pAt||Date.now())-P.stepT0-(P.stepPaused||0))/1000,left=Math.ceil(st[1]-se);
-   if(left<=0){if(P.i>=P.steps.length-1){finishPlayer(true);return}P.i++;P.stepT0=Date.now();P.stepPaused=0;beep(660);render();tick();return}
-   if(left===3&&P.warned!==P.i){P.warned=P.i;beep(440,0.15)}
-   var cd2=document.getElementById('pl-cd');if(cd2)cd2.textContent=left;var bar=document.getElementById('pl-bar');if(bar)bar.style.width=Math.min(100,se/st[1]*100).toFixed(1)+'%'}
+var RAF=null,lastLvl=0;
+function bScale(b,e){var cyc=b.ph.reduce(function(a,x){return a+x[1]},0),inC=e%cyc,acc=0,i=0;for(;i<b.ph.length-1;i++){if(inC<acc+b.ph[i][1])break;acc+=b.ph[i][1]}var q=(inC-acc)/b.ph[i][1],from=b.ph[(i+b.ph.length-1)%b.ph.length][2],to=b.ph[i][2],ez=(1-Math.cos(Math.PI*q))/2;return{s:from+(to-from)*ez,i:i,left:Math.ceil(b.ph[i][1]-(inC-acc)),cyc:Math.floor(e/cyc)}}
+function loop(){cancelAnimationFrame(RAF);var P=WUI.player;if(!P||P.ready)return;
+ if(!P.pAt){var e=elapsed(P);
+  if(P.k==='breath'){var b=BREATH[P.id];if(e>=P.total){finishPlayer(true);return}
+   var r=bScale(b,e),c=document.getElementById('bc');if(c)c.style.transform='scale('+r.s.toFixed(4)+')';
+   var key=r.cyc+'-'+r.i;if(key!==P.ph){P.ph=key;var lb=document.getElementById('pl-ph');if(lb)lb.textContent=b.ph[r.i][0];var sb=document.getElementById('pl-sub');if(sb)sb.textContent=b.ph[r.i][3]||'';if(r.i===0)beep(392,0.5)}
+   var cd=document.getElementById('pl-cd');if(cd&&cd.textContent!==String(r.left))cd.textContent=r.left;
+   var rm=document.getElementById('pl-rm');if(rm){var s=Math.ceil(P.total-e),tx=Math.floor(s/60)+':'+pad(s%60);if(rm.textContent!==tx)rm.textContent=tx}
+   if(Date.now()-lastLvl>120){lastLvl=Date.now();droneLevel(0.55+0.45*(r.s-0.45)/0.55)}
+  }else{var st=P.steps[P.i],se=(Date.now()-P.stepT0-(P.stepPaused||0))/1000,left=Math.ceil(st[1]-se);
+   if(left<=0){if(P.i>=P.steps.length-1){finishPlayer(true);return}P.i++;P.stepT0=Date.now();P.stepPaused=0;beep(660,0.5);render()}
+   else{if(left===3&&P.warned!==P.i){P.warned=P.i;beep(440,0.25)}var cd2=document.getElementById('pl-cd');if(cd2&&cd2.textContent!==String(left))cd2.textContent=left;var bar=document.getElementById('pl-bar');if(bar)bar.style.width=Math.min(100,se/st[1]*100).toFixed(1)+'%'}
+   var fg=document.getElementById('figg');if(fg&&ANIM[P.steps[P.i][3]])fg.innerHTML=figInner(ANIM[P.steps[P.i][3]],e)}
  }
- TK=setTimeout(tick,200);
+ RAF=requestAnimationFrame(loop);
 }
+function soundRow(){var hz=toneHz();return '<div class="sndrow"><span class="meta">Klang</span><div class="chips">'+TONES.map(function(x){return '<button class="chip'+(hz===x[0]?' on':'')+'" data-a="w-tone" data-v="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div><label class="chk" style="margin-top:8px"><input type="checkbox" data-wc="cues"'+(cuesOn()?' checked':'')+'> Signaltöne bei jedem Wechsel</label>'}
 function viewPlayer(){
- var P=WUI.player,h='<div class="card player"><div class="mhead"><h3>'+esc(P.n)+'</h3><button class="lnk" data-a="w-stop">Beenden</button></div>';
- if(P.k==='breath'){var b=BREATH[P.id];
-  h+='<div class="bwrap"><div class="bcirc" id="bc"></div><div class="bin"><b id="pl-ph">Bereit</b><span id="pl-cd" class="bcd"></span></div></div><div class="meta" style="text-align:center" id="pl-rm"></div><p class="meta" style="text-align:center">'+esc(b.d)+'</p>';
- }else{var st=P.steps[P.i],nx=P.steps[P.i+1];
-  h+='<div class="meta">Übung '+(P.i+1)+' von '+P.steps.length+'</div><div class="mstep"><b>'+esc(st[0])+'</b><div class="mcd" id="pl-cd">'+st[1]+'</div><div class="bar"><i id="pl-bar" style="width:0%"></i></div><p>'+esc(st[2])+'</p></div>'+(nx?'<div class="meta">Als Nächstes: '+esc(nx[0])+'</div>':'<div class="meta">Letzte Übung</div>');
+ var P=WUI.player,o=P.k==='breath'?BREATH[P.id]:MOB[P.id],h='<div class="card player"><div class="mhead"><h3>'+esc(P.n)+'</h3><button class="lnk" data-a="w-stop">'+(P.ready?'Zurück':'Beenden')+'</button></div>';
+ if(P.ready){
+  h+='<p class="meta" style="margin-top:4px">'+(P.k==='breath'?esc(o.d):P.steps.length+' Übungen · '+P.min+' Min. · '+esc(o.use))+'</p>';
+  if(P.k==='breath')h+='<div class="sndrow"><span class="meta">Dauer</span><div class="chips">'+[3,5,10].map(function(m){return '<button class="chip'+(P.min===m?' on':'')+'" data-a="w-dur" data-v="'+m+'">'+m+' Min.</button>'}).join('')+'</div></div>';
+  else h+='<ol class="mlist">'+o.ex.map(function(e){return '<li>'+esc(e[0])+(e[2]?' <span class="meta">(je Seite)</span>':'')+'</li>'}).join('')+'</ol>';
+  h+=soundRow()+'<p class="meta" style="font-size:12px;margin-top:10px">Solfeggio-Frequenzen als ruhiger Klangteppich. Kein Ton? Lautstärke prüfen.</p><button class="btn pri" style="width:100%;padding:14px;margin-top:6px" data-a="w-start">▶ Starten</button></div>';
+  return h;
  }
- var snd=LS.get('tj_sound')!==false;
- h+='<div class="btns two"><button class="btn" data-a="w-pause">'+(P.pAt?'▶ Weiter':'❚❚ Pause')+'</button>'+(P.k==='mob'?'<button class="btn" data-a="w-next">Überspringen ›</button>':'<button class="btn" data-a="w-sound">'+(snd?'🔔 Ton an':'🔕 Ton aus')+'</button>')+'</div>';
+ if(P.k==='breath'){var r=bScale(o,P.pAt||P.t0?elapsed(P):0);
+  h+='<div class="bwrap"><div class="bring"></div><div class="bcirc" id="bc" style="transform:scale('+r.s.toFixed(4)+')"></div><div class="bin"><b id="pl-ph">'+o.ph[r.i][0]+'</b><span id="pl-sub" class="meta">'+(o.ph[r.i][3]||'')+'</span><span id="pl-cd" class="bcd">'+r.left+'</span></div></div><div class="meta" style="text-align:center"><span id="pl-rm"></span> übrig</div>';
+ }else{var st=P.steps[P.i],nx=P.steps[P.i+1];
+  h+='<div class="meta">'+(P.i+1)+' / '+P.steps.length+'</div><svg class="fig" viewBox="12 4 176 128" aria-hidden="true"><g id="figg">'+(ANIM[st[3]]?figInner(ANIM[st[3]],0):'')+'</g></svg><div class="mstep"><b>'+esc(st[0])+'</b><div class="mcd" id="pl-cd">'+st[1]+'</div><div class="bar"><i id="pl-bar" style="width:0%"></i></div><p>'+esc(st[2])+'</p></div><div class="meta">'+(nx?'Danach: '+esc(nx[0]):'Letzte Übung')+'</div>';
+ }
+ h+='<div class="btns two"><button class="btn" data-a="w-pause" id="pl-pause">'+(P.pAt?'▶ Weiter':'❚❚ Pause')+'</button>'+(P.k==='mob'?'<button class="btn" data-a="w-next">Weiter ›</button>':'<button class="btn" data-a="w-mute" id="pl-mute">'+(DR?'🔊 Klang':'🔇 Klang')+'</button>')+'</div>';
  return h+'</div>';
 }
-function finishPlayer(full){var P=WUI.player;if(!P)return;clearTimeout(TK);wakeOff();var min=Math.round(Math.min(elapsed(P),P.k==='breath'?P.total:1e9)/6)/10;WUI.player=null;
- if(min>=1){var t=today(),w=wDay(t)?clone(wDay(t)):{date:t,sore:{},extra:[]};w.relax=w.relax||[];w.relax.push({k:P.k,id:P.id,n:P.n,min:min,at:nowT()});saveWell(w);WUI.done={n:P.n,min:min};if(full)beep(784,0.6)}
+function finishPlayer(full){var P=WUI.player;if(!P)return;cancelAnimationFrame(RAF);if(P.ready){WUI.player=null;render();return}wakeOff();droneStop(false);var min=Math.round(Math.min(elapsed(P),P.k==='breath'?P.total:1e9)/6)/10;WUI.player=null;
+ if(min>=1){var t=today(),w=wDay(t)?clone(wDay(t)):{date:t,sore:{},extra:[]};w.relax=w.relax||[];w.relax.push({k:P.k,id:P.id,n:P.n,min:min,at:nowT()});saveWell(w);WUI.done={n:P.n,min:min};if(full)beep(784,1.2)}
  else{WUI.done=null;toast('Unter 1 Minute – nicht eingetragen')}
  render();window.scrollTo(0,0)}
 function wAction(a,v,b){
- var c=WUI.ci;
+ var c=WUI.ci,P=WUI.player;
  if(a==='w-tab'){WUI.tab=v;render()}
  else if(a==='w-set'){c[b.getAttribute('data-f')]=+v;render()}
  else if(a==='w-sore'){c.sore=c.sore||{};c.sore[v]=(((c.sore[v]||0)+1)%3);render()}
  else if(a==='w-extra'){c.extra=c.extra||[];var i=c.extra.indexOf(v);if(i>=0)c.extra.splice(i,1);else c.extra.push(v);render()}
  else if(a==='w-cisave'){var sl=num(c.sleep);if(isNaN(sl)||sl<0||sl>16){toast('Bitte Schlafdauer in Stunden eintragen');return}c.sleep=Math.round(sl*10)/10;var old=wDay(today());if(old&&old.relax)c.relax=old.relax;c.date=today();saveWell(clone(c));WUI.ci=null;WUI.edit=false;syncDraftFromWell();toast('Check-in gespeichert ✓');render();window.scrollTo(0,0)}
- else if(a==='w-ciedit'){WUI.edit=true;WUI.ci=clone(wDay(today()));render()}
+ else if(a==='w-det'){WUI.det=!WUI.det;render()}
+ else if(a==='w-ciedit'){WUI.edit=true;WUI.det=false;WUI.ci=clone(wDay(today()));render()}
  else if(a==='w-cicancel'){WUI.edit=false;WUI.ci=null;render()}
- else if(a==='w-breath')startBreath(v,BREATH[v].min);
- else if(a==='w-mob')startMob(v);
+ else if(a==='w-breath')openPlayer('breath',v);
+ else if(a==='w-mob')openPlayer('mob',v);
+ else if(a==='w-dur'){P.min=+v;render()}
+ else if(a==='w-tone'){LS.set('tj_tone',+v);if(P&&!P.ready){ensureAC();droneStart(+v)}else if(+v){ensureAC();droneStart(+v);setTimeout(function(){droneStop(false)},1800)}render()}
+ else if(a==='w-start')startPlayer();
  else if(a==='w-stop')finishPlayer(false);
- else if(a==='w-pause'){var P=WUI.player;if(P.pAt){var d=Date.now()-P.pAt;P.paused+=d;if(P.k==='mob')P.stepPaused=(P.stepPaused||0)+d;P.pAt=null;if(P.k==='breath')P.ph=-1}else P.pAt=Date.now();render();tick()}
- else if(a==='w-next'){var P2=WUI.player;if(P2.i>=P2.steps.length-1){finishPlayer(true);return}P2.i++;P2.stepT0=Date.now();P2.stepPaused=0;if(P2.pAt){P2.pAt=Date.now()}render();tick()}
- else if(a==='w-sound'){LS.set('tj_sound',LS.get('tj_sound')===false);render();tick()}
+ else if(a==='w-pause'){if(P.pAt){var d=Date.now()-P.pAt;P.paused+=d;if(P.k==='mob')P.stepPaused=(P.stepPaused||0)+d;P.pAt=null;if(AC&&AC.resume)AC.resume()}else{P.pAt=Date.now();if(AC&&AC.suspend)AC.suspend()}b.textContent=P.pAt?'▶ Weiter':'❚❚ Pause'}
+ else if(a==='w-mute'){ensureAC();if(DR)droneStop(true);else droneStart(toneHz()||528);b.textContent=DR?'🔊 Klang':'🔇 Klang'}
+ else if(a==='w-next'){if(P.i>=P.steps.length-1){finishPlayer(true);return}P.i++;P.stepT0=Date.now();P.stepPaused=0;if(P.pAt)P.pAt=Date.now();render()}
  else if(a==='w-donex'){WUI.done=null;render()}
  else if(a==='w-rdel'){var w=clone(wDay(today()));w.relax.splice(+b.getAttribute('data-i'),1);saveWell(w);render()}
 }
